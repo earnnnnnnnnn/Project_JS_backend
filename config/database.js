@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 require('dotenv').config();
 
-const dbPath = path.resolve(__dirname, '../Database/camera.sqlite');
+const dbPath = path.resolve(__dirname, '../Database/database.sqlite');
 
 const db = new sqlite3.Database(dbPath, (err) => {
   if (err) {

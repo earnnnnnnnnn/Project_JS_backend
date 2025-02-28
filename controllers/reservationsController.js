@@ -13,14 +13,23 @@ exports.getUsers = (req, res) => {
 };
 
 exports.createUser = (req, res) => {
-  const { username, password, email, phone_number } = req.body;
+  const { reservation_date, status, user_id, camera_id } = req.body;
+
+  // ตรวจสอบว่าข้อมูลที่จำเป็นครบถ้วน
+  if (!reservation_date || !status || !user_id || !camera_id) {
+    return res.status(400).json({ error: 'All fields (reservation_date, status, user_id, camera_id) are required' });
+  }
+
+  const createdAt = new Date().toISOString();
+  const updateAt = createdAt;  // ใช้เวลาเดียวกันสำหรับ `createdAt` และ `updateAt`
+
   const sql = 'INSERT INTO reservations (reservation_date, status, user_id, camera_id, createdAt, updateAt) VALUES (?, ?, ?, ?, ?, ?)';
   
-  db.run(sql, [username, password, email, phone_number], function (err) {
+  db.run(sql, [reservation_date, status, user_id, camera_id, createdAt, updateAt], function (err) {
     if (err) {
-      console.error('Error inserting reservations:', err.message);
+      console.error('Error inserting reservation:', err.message);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
-    res.json({ id: this.lastID, username, email, phone_number });
+    res.json({ id: this.lastID, reservation_date, status, user_id, camera_id, createdAt, updateAt });
   });
 };

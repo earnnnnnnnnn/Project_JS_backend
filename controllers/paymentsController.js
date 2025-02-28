@@ -13,14 +13,22 @@ exports.getUsers = (req, res) => {
 };
 
 exports.createUser = (req, res) => {
-  const { username, password, email, phone_number } = req.body;
+  const { amount, payment_method, rental_id } = req.body;
+
+  if (!amount || !payment_method || !rental_id) {
+    return res.status(400).json({ error: 'Amount, payment method, and rental ID are required' });
+  }
+
+  const createdAt = new Date().toISOString();
+  const updateAt = createdAt;  // Assuming both are the same at creation time
+
   const sql = 'INSERT INTO payments (amount, payment_method, rental_id, createdAt, updateAt) VALUES (?, ?, ?, ?, ?)';
   
-  db.run(sql, [username, password, email, phone_number], function (err) {
+  db.run(sql, [amount, payment_method, rental_id, createdAt, updateAt], function (err) {
     if (err) {
-      console.error('Error inserting payments:', err.message);
+      console.error('Error inserting payment:', err.message);
       return res.status(500).json({ error: 'Internal Server Error' });
     }
-    res.json({ id: this.lastID, username, email, phone_number });
+    res.json({ id: this.lastID, amount, payment_method, rental_id, createdAt, updateAt });
   });
 };
