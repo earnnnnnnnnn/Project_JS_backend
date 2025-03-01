@@ -23,13 +23,16 @@ exports.createUser = (req, res) => {
   const createdAt = new Date().toISOString();
   const updateAt = createdAt;  // ใช้เวลาเดียวกันสำหรับ `createdAt` และ `updateAt`
 
-  const sql = 'INSERT INTO users (username, password, email, phone_number, createdAt, updateAt) VALUES (?, ?, ?, ?, ?, ?)';
+  const sql = 'INSERT INTO users (username, password, email, phone_number) VALUES (?, ?, ?, ?)';
   
-  db.run(sql, [username, password, email, phone_number, createdAt, updateAt], function (err) {
-    if (err) {
-      console.error('Error inserting user:', err.message);
-      return res.status(500).json({ error: 'Internal Server Error' });
-    }
-    res.json({ id: this.lastID, username, email, phone_number, createdAt, updateAt });
-  });
+db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL,
+    password TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    phone_number TEXT NOT NULL,
+    createdAt TEXT NOT NULL,
+    updateAt TEXT NOT NULL)
+    `);
 };
